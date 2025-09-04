@@ -1,24 +1,17 @@
 "use client";
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-/**
- * A functional component for the login page of the Food Tracker application.
- *
- * @returns {JSX.Element} The Login page component.
- */
-const LoginPage = () => {
+export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  /**
-   * Handles the form submission for user login.
-   *
-   * @param {React.FormEvent<HTMLFormElement>} e - The form event.
-   */
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+const router = useRouter();
+
+  const handleLoginClick = (e: React.FormEvent) => {
     e.preventDefault();
-    // เพิ่ม logic สำหรับการล็อกอิน เช่น การเรียก API
-    console.log('ล็อกอิน:', { email, password });
+    // เอาemail/password ไปตรวจสอบ
+    router.push('/dashboard');
   };
 
   return (
@@ -27,7 +20,7 @@ const LoginPage = () => {
         <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
           เข้าสู่ระบบ
         </h1>
-        <form onSubmit={handleLogin} className="w-full space-y-4">
+        <form onSubmit={handleLoginClick} className="w-full space-y-4">
           <input
             type="email"
             placeholder="อีเมล"
@@ -59,4 +52,3 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
