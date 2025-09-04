@@ -1,120 +1,78 @@
 "use client";
-import React, { useState } from 'react';
+import { useState } from "react";
+import { ArrowLeft, Save } from "lucide-react";
 
-// Mock Link component since we are in a single-file environment
-const Link = ({ href, children, className }) => (
-  <a href={href} className={className}>{children}</a>
-);
+export default function FunctionPage() {
+  // State for form fields
+  const [foodName, setFoodName] = useState("");
+  const [mealType, setMealType] = useState("อาหารเช้า");
+  const [foodImage, setFoodImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [showSaveMessage, setShowSaveMessage] = useState(false);
 
-// Mock user data to simulate a logged-in user
-interface User {
-  id: string;
-  name: string;
-  profileImage: string;
-}
+  // Handle image file selection and create a URL for preview
+  // const handleImageChange = (event) => {
+  //   const file = event.target.files?.[0];
+  //   if (file) {
+  //     setFoodImage(file);
+  //     setPreviewImage(URL.createObjectURL(file));
+  //   }
+  // };
 
-const mockUser: User = {
-  id: 'user123',
-  name: 'สมชาย รักสุขภาพ',
-  profileImage: 'https://placehold.co/100x100/60a5fa/ffffff?text=U',
-};
+  // Handle form submission
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+  //   console.log("Saving food entry:", {
+  //     foodName,
+  //     mealType,
+  //     foodImage,
+  //   });
 
-/**
- * A functional component for the Add Food page.
- * It provides a form to add new food entries with image preview.
- * * @returns {JSX.Element} The Add Food page component.
- */
-const AddFoodPage = () => {
-  const [foodName, setFoodName] = useState('');
-  const [mealType, setMealType] = useState('อาหารเช้า');
-  const [foodImage, setFoodImage] = useState<string | null>(null);
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFoodImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newFoodEntry = {
-      foodName,
-      mealType,
-      date,
-      // In a real application, you would handle image upload here
-      foodImage: foodImage || '', 
-    };
-    console.log('บันทึกรายการอาหาร:', newFoodEntry);
-    // Add logic to save data to a database
-  };
+  //   setShowSaveMessage(true);
+  //   setTimeout(() => {
+  //     setShowSaveMessage(false);
+  //   }, 3000);
+  // };
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-gradient-to-br from-indigo-300 via-sky-300 to-emerald-300 p-4 font-sans text-white">
-      {/* User Info and Navigation - Now outside the main content card */}
-      <div className="flex w-full items-center justify-between mb-6 flex-wrap gap-4">
-        <Link href="/dashboard" className="text-white hover:text-white/80 transition-colors">
-          &larr; กลับไปที่แดชบอร์ด
-        </Link>
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <img
-              src={mockUser.profileImage}
-              alt="User Profile"
-              className="h-10 w-10 rounded-full object-cover border-2 border-white"
-            />
-            <span className="font-semibold text-white">
-              {mockUser.name}
-            </span>
-          </div>
-          <Link
-            href="/profile"
-            className="rounded-full bg-indigo-600 px-6 py-2 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-indigo-500"
-          >
-            โปรไฟล์
-          </Link>
-        </div>
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-red-400 via-green-500 to-blue-600 p-4 font-sans text-white">
+      {/* Navigation and header */}
+      <div className="flex w-full max-w-lg items-center justify-between mb-6">
+        <a
+          href="/"
+          className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors font-semibold"
+        >
+          <ArrowLeft size={20} />
+          กลับไปที่หน้าหลัก
+        </a>
       </div>
-      
-      <div className="flex w-full flex-col items-center rounded-2xl bg-white/30 p-8 shadow-xl backdrop-blur-md">
-        <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-          เพิ่มอาหารใหม่
+
+      {/* Main content card with form */}
+      <div className="flex w-full max-w-lg flex-col items-center rounded-2xl bg-white/30 p-8 shadow-xl backdrop-blur-md">
+        <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-gray-800 sm:text-4xl">
+          เพิ่มรายการอาหาร
         </h1>
-        
-        <form onSubmit={handleSubmit} className="w-full max-w-xl space-y-6">
+
+        <form className="w-full space-y-6">
           {/* Food Name Input */}
-          <div>
-            <label htmlFor="foodName" className="block text-sm font-medium text-white mb-2">
-              ชื่ออาหาร
-            </label>
+          <div className="relative">
             <input
-              id="foodName"
               type="text"
+              id="foodName"
               value={foodName}
               onChange={(e) => setFoodName(e.target.value)}
-              required
-              className="w-full rounded-full border-0 bg-white/50 px-4 py-2 font-medium text-white placeholder-white/80 focus:outline-none focus:ring-2 focus:ring-sky-500 transition duration-300"
-              placeholder="ป้อนชื่ออาหาร"
+              placeholder="ชื่ออาหาร"
+              className="w-full rounded-full border-0 bg-white/50 px-6 py-4 font-medium text-gray-800 placeholder-gray-500 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500"
             />
           </div>
 
-          {/* Meal Type Selection */}
-          <div>
-            <label htmlFor="mealType" className="block text-sm font-medium text-white mb-2">
-              มื้ออาหาร
-            </label>
+          {/* Meal Type Dropdown */}
+          <div className="relative">
             <select
               id="mealType"
               value={mealType}
               onChange={(e) => setMealType(e.target.value)}
-              className="w-full rounded-full border-0 bg-white/50 px-4 py-2 font-medium text-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition duration-300"
+              className="w-full rounded-full border-0 bg-white/50 px-6 py-4 font-medium text-gray-800 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500"
             >
               <option value="อาหารเช้า">อาหารเช้า</option>
               <option value="อาหารกลางวัน">อาหารกลางวัน</option>
@@ -123,55 +81,50 @@ const AddFoodPage = () => {
             </select>
           </div>
 
-          {/* Date Input */}
-          <div>
-            <label htmlFor="date" className="block text-sm font-medium text-white mb-2">
-              วันเดือนปี
-            </label>
-            <input
-              id="date"
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
-              className="w-full rounded-full border-0 bg-white/50 px-4 py-2 font-medium text-white focus:outline-none focus:ring-2 focus:ring-sky-500 transition duration-300"
-            />
-          </div>
-
-          {/* Image Upload and Preview */}
-          <div className="flex flex-col items-center">
-            <label htmlFor="foodImage" className="cursor-pointer mb-4">
-              <span className="inline-block rounded-full bg-sky-600 px-6 py-2 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-sky-500">
-                เลือกรูปอาหาร
-              </span>
+          {/* Image Upload */}
+          <div className="flex flex-col items-center space-y-4">
+            <label htmlFor="foodImage" className="cursor-pointer">
+              {previewImage ? (
+                <img
+                  src={previewImage}
+                  alt="Food Preview"
+                  className="h-40 w-40 rounded-2xl border-4 border-white object-cover shadow-lg"
+                />
+              ) : (
+                <div className="flex h-40 w-40 items-center justify-center rounded-2xl border-4 border-dashed border-white/50 bg-white/20 text-white shadow-lg">
+                  <span className="text-sm font-semibold text-center">
+                    เลือกรูปภาพ
+                  </span>
+                </div>
+              )}
               <input
                 id="foodImage"
                 type="file"
-                accept="image/*"
-                onChange={handleImageChange}
                 className="hidden"
+                accept="image/*"
               />
             </label>
-            {foodImage && (
-              <div className="mt-4 p-2 rounded-xl bg-white/50 shadow-inner">
-                <img src={foodImage} alt="Image Preview" className="h-48 w-48 object-cover rounded-lg shadow-md" />
-              </div>
-            )}
           </div>
 
           {/* Save Button */}
-          <div className="flex justify-center pt-4">
-            <button
-              type="submit"
-              className="w-full rounded-full bg-emerald-600 px-8 py-3 font-bold text-white shadow-lg transition duration-300 ease-in-out hover:scale-105 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
-            >
-              บันทึก
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full transform rounded-full bg-sky-600 px-8 py-4 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-sky-500 flex items-center justify-center gap-2"
+          >
+            <Save size={20} />
+            บันทึกรายการอาหาร
+          </button>
         </form>
+
+        {/* Success message modal */}
+        {showSaveMessage && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="rounded-lg bg-green-500 px-8 py-6 text-white text-center shadow-lg">
+              <p className="font-bold">บันทึกสำเร็จ!</p>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );
-};
-
-export default AddFoodPage;
+}

@@ -70,17 +70,6 @@ export default function RegisterPage() {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" 
           />
-          <select 
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
-            className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500"
-          >
-            <option value="">เลือกเพศ</option>
-            <option value="male">ชาย</option>
-            <option value="female">หญิง</option>
-            <option value="other">อื่นๆ</option>
-          </select>
-
           <div className="my-4 flex items-center justify-center">
             <label htmlFor="file-upload" className="cursor-pointer">
               {imagePreview ? (

@@ -1,137 +1,139 @@
-"use client";
-import React, { useState } from 'react';
+'use client';
 
-// Mock Link component since we are in a single-file environment
-const Link = ({ href, children, className }) => (
-  <a href={href} className={className}>{children}</a>
-);
+import { ChangeEvent, FormEvent, useRef, useState } from 'react';
+import { Home, ImageIcon, Trash2, Save } from 'lucide-react';
 
-// Mock user data to simulate a logged-in user
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  profileImage: string;
-}
-
-const mockUser: User = {
-  id: 'user123',
-  name: 'สมชาย รักสุขภาพ',
-  email: 'somchai@email.com',
-  profileImage: 'https://placehold.co/150x150/60a5fa/ffffff?text=U',
+// --- Mock User Data for pre-filling the form ---
+// In a real app, this would come from a context or API call
+const currentUser = {
+  name: 'Jane Doe',
+  email: 'jane.doe@example.com',
+  profileImageUrl: null,
 };
 
-/**
- * A functional component for the User Profile page.
- * It provides a form to edit user details and a profile picture.
- *
- * @returns {JSX.Element} The Profile page component.
- */
-const ProfilePage = () => {
-  const [userName, setUserName] = useState(mockUser.name);
-  const [userEmail, setUserEmail] = useState(mockUser.email);
-  const [profileImage, setProfileImage] = useState<string | null>(mockUser.profileImage);
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+export default function Page() {
+  const [formData, setFormData] = useState({
+    name: currentUser.name,
+    email: currentUser.email,
+    newPassword: '',
+  });
+  const [previewImage, setPreviewImage] = useState<string | null>(currentUser.profileImageUrl);
+  const [message, setMessage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
-      setSelectedImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      setPreviewImage(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const updatedUser = {
-      name: userName,
-      email: userEmail,
-      profileImage: profileImage || '',
-    };
-    console.log('ข้อมูลผู้ใช้ที่อัปเดต:', updatedUser);
-    // Add logic to save the updated data to a database
+  const handleRemoveImage = () => {
+    setPreviewImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleImageUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+    
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    console.log("Updated data:", {
+        ...formData,
+        profileImage: previewImage,
+    });
+    setMessage("Profile saved successfully!");
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-indigo-300 via-sky-300 to-emerald-300 p-4 font-sans text-center text-white">
-      <div className="flex w-full max-w-lg flex-col items-center justify-center rounded-2xl bg-white/30 p-8 shadow-xl backdrop-blur-md">
-        {/* Back Link */}
-        <div className="self-start mb-4">
-          <Link href="/dashboard" className="text-white hover:text-white/80 transition-colors">
-            &larr; กลับไปที่แดชบอร์ด
-          </Link>
-        </div>
-        <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-          แก้ไขข้อมูลส่วนตัว
-        </h1>
-        
-        <form onSubmit={handleSubmit} className="w-full space-y-4">
-          {/* Profile Image Upload and Preview */}
-          <div className="my-4 flex items-center justify-center">
-            <label htmlFor="file-upload" className="cursor-pointer">
-              {profileImage ? (
-                <img src={profileImage} alt="Profile Preview" className="h-28 w-28 rounded-full border-4 border-white object-cover shadow-lg" />
-              ) : (
-                <div className="flex h-28 w-28 items-center justify-center rounded-full border-4 border-dashed border-white/50 bg-white/20 text-white shadow-lg">
-                  {/* SVG icon for camera */}
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-10 w-10 opacity-70">
-                    <path d="M4 4h4.5l1.5-3h4l1.5 3H20a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm8 11.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7z"/>
-                  </svg>
-                </div>
-              )}
-              <input id="file-upload" type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
-            </label>
-          </div>
-
-          {/* User Name Input */}
-          <div>
-            <label htmlFor="userName" className="block text-sm font-medium text-white mb-2 text-left">
-              ชื่อ-สกุล
-            </label>
-            <input
-              id="userName"
-              type="text"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              required
-              className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 focus:outline-none focus:ring-2 focus:ring-sky-500 transition duration-300"
-              placeholder="ป้อนชื่อ-สกุล"
-            />
-          </div>
-
-          {/* User Email Input */}
-          <div>
-            <label htmlFor="userEmail" className="block text-sm font-medium text-white mb-2 text-left">
-              อีเมล
-            </label>
-            <input
-              id="userEmail"
-              type="email"
-              value={userEmail}
-              onChange={(e) => setUserEmail(e.target.value)}
-              required
-              className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 focus:outline-none focus:ring-2 focus:ring-sky-500 transition duration-300"
-              placeholder="ป้อนอีเมล"
-            />
-          </div>
-
-          {/* Save Button */}
-          <div className="flex justify-center pt-4">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-red-400 via-green-500 to-blue-600 p-4 font-sans text-center text-white">
+      {message && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="rounded-xl bg-white p-6 shadow-2xl">
+            <h3 className="text-xl font-semibold text-gray-800">Success!</h3>
+            <p className="mt-2 text-gray-600">{message}</p>
             <button
-              type="submit"
-              className="w-full transform rounded-md bg-emerald-600 px-8 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-emerald-500"
+              onClick={() => setMessage(null)}
+              className="mt-4 rounded-md bg-sky-600 px-4 py-2 text-white transition-colors hover:bg-sky-500"
             >
-              บันทึก
+              OK
             </button>
           </div>
+        </div>
+      )}
+      <div className="flex w-full max-w-lg flex-col items-center justify-center rounded-2xl bg-white/30 p-8 shadow-xl backdrop-blur-md">
+        <div className="flex w-full items-center justify-between mb-4">
+            <a href="/dashboard" className="rounded-full bg-white/20 p-2 transition-colors hover:bg-white/40">
+                <Home className="h-5 w-5 text-white" />
+            </a>
+        </div>
+        <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+          แก้ไขโปรไฟล์
+        </h1>
+        <form onSubmit={handleSubmit} className="w-full space-y-4">
+          <input 
+            type="text" 
+            name="name"
+            placeholder="ชื่อ-สกุล" 
+            value={formData.name}
+            onChange={handleInputChange}
+            className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" 
+          />
+          <input 
+            type="email" 
+            name="email"
+            placeholder="อีเมล" 
+            value={formData.email}
+            onChange={handleInputChange}
+            className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" 
+          />
+          <input 
+            type="password" 
+            name="newPassword"
+            placeholder="รหัสผ่านใหม่" 
+            value={formData.newPassword}
+            onChange={handleInputChange}
+            className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" 
+          />
+          <div className="my-4 flex items-center justify-center space-x-4">
+            <div onClick={handleImageUploadClick} className="cursor-pointer">
+              {previewImage ? (
+                <img src={previewImage} alt="Profile Preview" className="h-28 w-28 rounded-full border-4 border-white object-cover shadow-lg" />
+              ) : (
+                <div className="flex h-28 w-28 items-center justify-center rounded-full border-4 border-dashed border-white/50 bg-white/20 text-white shadow-lg">
+                  <ImageIcon className="h-10 w-10 opacity-70" />
+                </div>
+              )}
+              <input id="file-upload" type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageChange} />
+            </div>
+            {previewImage && (
+              <button
+                type="button"
+                onClick={handleRemoveImage}
+                className="rounded-full bg-red-500 p-2 text-white shadow-md transition-transform hover:scale-105"
+              >
+                <Trash2 className="h-5 w-5" />
+              </button>
+            )}
+          </div>
+          
+          <button 
+            type="submit" 
+            className="w-full transform rounded-full bg-sky-600 px-8 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-sky-500 flex items-center justify-center space-x-2"
+          >
+            <Save className="h-5 w-5" />
+            <span>แก้ไขโปรไฟล์</span>
+          </button>
         </form>
       </div>
     </main>
   );
-};
-
-export default ProfilePage;
+}

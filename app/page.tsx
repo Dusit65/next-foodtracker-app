@@ -2,7 +2,7 @@ import Image from "next/image";
 import foodbanner from "./images/foodbanner.jpg";
 import Link from "next/link";
 
-export default function HoemPage() {
+export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-red-400 via-green-500 to-blue-600  p-4 font-sans text-center text-white">
       {/* Main content container with a vibrant gradient background */}

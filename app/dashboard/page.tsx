@@ -10,7 +10,7 @@ import profile from './../images/profile.png';
 
 // --- Mock User Data (เพิ่มเข้ามา) ---
 const mockUser = {
-  name: 'Taramiratsu Xato',
+  name: 'Kinema',
   profileImageUrl: profile, // รูปโปรไฟล์สุ่ม
 };
 
