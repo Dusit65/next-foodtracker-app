@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Mock Link component since we are in a single-file environment
 const Link = ({ href, children, className }) => (
@@ -19,17 +19,55 @@ const mockUser: User = {
   profileImage: 'https://placehold.co/100x100/60a5fa/ffffff?text=U',
 };
 
+// Mock data for the food items to be edited. In a real application, this would be fetched from a database based on the item ID.
+const mockFoodData = [
+  {
+    id: 1,
+    date: '2024-05-20',
+    foodImage: 'https://cdn.pixabay.com/photo/2018/12/07/15/46/food-3861918_1280.jpg',
+    foodName: 'ข้าวผัดกะเพรา',
+    mealType: 'อาหารกลางวัน',
+  },
+  {
+    id: 2,
+    date: '2024-05-21',
+    foodImage: 'https://cdn.pixabay.com/photo/2017/01/10/12/05/pancakes-1969244_1280.jpg',
+    foodName: 'ส้มตำ',
+    mealType: 'อาหารเย็น',
+  },
+  {
+    id: 3,
+    date: '2024-05-22',
+    foodImage: 'https://cdn.pixabay.com/photo/2017/01/10/12/05/pancakes-1969244_1280.jpg',
+    foodName: 'ไก่ทอด',
+    mealType: 'ของว่าง',
+  },
+];
+
 /**
- * A functional component for the Add Food page.
- * It provides a form to add new food entries with image preview.
- * * @returns {JSX.Element} The Add Food page component.
+ * A functional component for the Edit Food page.
+ * It provides a form to edit an existing food entry.
+ *
+ * @returns {JSX.Element} The Edit Food page component.
  */
-const AddFoodPage = () => {
+const EditFoodPage = () => {
   const [foodName, setFoodName] = useState('');
-  const [mealType, setMealType] = useState('อาหารเช้า');
+  const [mealType, setMealType] = useState('');
   const [foodImage, setFoodImage] = useState<string | null>(null);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState('');
+
+  // Use useEffect to load a random mock food item into the form when the component mounts
+  useEffect(() => {
+    // Select a random food item from the mock data for demonstration
+    const randomFoodIndex = Math.floor(Math.random() * mockFoodData.length);
+    const mockFoodToEdit = mockFoodData[randomFoodIndex];
+
+    setFoodName(mockFoodToEdit.foodName);
+    setMealType(mockFoodToEdit.mealType);
+    setFoodImage(mockFoodToEdit.foodImage);
+    setDate(mockFoodToEdit.date);
+  }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -45,20 +83,20 @@ const AddFoodPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newFoodEntry = {
+    const updatedFoodEntry = {
       foodName,
       mealType,
       date,
       // In a real application, you would handle image upload here
       foodImage: foodImage || '', 
     };
-    console.log('บันทึกรายการอาหาร:', newFoodEntry);
-    // Add logic to save data to a database
+    console.log('แก้ไขรายการอาหาร:', updatedFoodEntry);
+    // Add logic to update the data in a database
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-gradient-to-br from-indigo-300 via-sky-300 to-emerald-300 p-4 font-sans text-white">
-      {/* User Info and Navigation - Now outside the main content card */}
+      {/* User Info and Navigation */}
       <div className="flex w-full items-center justify-between mb-6 flex-wrap gap-4">
         <Link href="/dashboard" className="text-white hover:text-white/80 transition-colors">
           &larr; กลับไปที่แดชบอร์ด
@@ -85,7 +123,7 @@ const AddFoodPage = () => {
       
       <div className="flex w-full flex-col items-center rounded-2xl bg-white/30 p-8 shadow-xl backdrop-blur-md">
         <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-          เพิ่มอาหารใหม่
+          แก้ไขอาหาร
         </h1>
         
         <form onSubmit={handleSubmit} className="w-full max-w-xl space-y-6">
@@ -174,4 +212,4 @@ const AddFoodPage = () => {
   );
 };
 
-export default AddFoodPage;
+export default EditFoodPage;
