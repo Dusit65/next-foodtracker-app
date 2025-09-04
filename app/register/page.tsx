@@ -6,7 +6,7 @@ import React, { useState } from 'react';
  *
  * @returns {JSX.Element} The Register page component.
  */
-const RegisterPage = () => {
+export default function RegisterPage() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -112,5 +112,3 @@ const RegisterPage = () => {
     </main>
   );
 };
-
-export default RegisterPage;
