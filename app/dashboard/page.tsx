@@ -1,6 +1,10 @@
-"use client";
-import React, { useState } from 'react';
+'use client';
 
+import { useState, useMemo } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Search, PlusCircle, Edit, Trash2, ChevronLeft, ChevronRight, Home } from 'lucide-react';
+import profile from './../images/profile.png';
 // Mock data for a logged-in user. In a real application, this would come from an authentication service.
 interface User {
   id: string;
@@ -25,6 +29,11 @@ const mockFoodData: FoodEntry[] = [
   { id: 5, date: '2024-05-22', foodImage: 'https://cdn.pixabay.com/photo/2018/12/07/15/46/food-3861918_1280.jpg', foodName: 'ไก่ทอด', mealType: 'ของว่าง' },
   { id: 6, date: '2024-05-22', foodImage: 'https://cdn.pixabay.com/photo/2018/12/07/15/46/food-3861918_1280.jpg', foodName: 'พิซซ่า', mealType: 'อาหารเย็น' },
   { id: 7, date: '2024-05-23', foodImage: 'https://cdn.pixabay.com/photo/2018/12/07/15/46/food-3861918_1280.jpg', foodName: 'ข้าวต้มกุ๊ย', mealType: 'อาหารเช้า' },
+  { id: 8, date: '2024-05-23', foodImage: 'https://cdn.pixabay.com/photo/2018/12/07/15/46/food-3861918_1280.jpg', foodName: 'ข้าวต้มกุ๊ย', mealType: 'อาหารเช้า' },
+  { id: 9, date: '2024-05-23', foodImage: 'https://cdn.pixabay.com/photo/2018/12/07/15/46/food-3861918_1280.jpg', foodName: 'ข้าวต้มกุ๊ย', mealType: 'อาหารเช้า' },
+  { id: 10, date: '2024-05-23', foodImage: 'https://cdn.pixabay.com/photo/2018/12/07/15/46/food-3861918_1280.jpg', foodName: 'ข้าวต้มกุ๊ย', mealType: 'อาหารเช้า' },
+  { id: 11, date: '2024-05-23', foodImage: 'https://cdn.pixabay.com/photo/2018/12/07/15/46/food-3861918_1280.jpg', foodName: 'ข้าวต้มกุ๊ย', mealType: 'อาหารเช้า' },
+
 
 ];
 
@@ -36,7 +45,7 @@ const mockFoodData: FoodEntry[] = [
 const DashboardPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   // Mock user state
   const [user, setUser] = useState<User | null>({
@@ -44,6 +53,10 @@ const DashboardPage = () => {
     name: 'สมชาย รักสุขภาพ',
     profileImage: 'https://placehold.co/100x100/60a5fa/ffffff?text=U',
   });
+  const mockUser = {
+  name: 'Taramiratsu Xato',
+  profileImageUrl: profile, // รูปโปรไฟล์สุ่ม
+};
 
   const filteredData = mockFoodData.filter(food =>
     food.foodName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -75,38 +88,25 @@ const DashboardPage = () => {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-gradient-to-br from-indigo-300 via-sky-300 to-emerald-300 p-4 font-sans text-white">
+    <main className="flex min-h-screen flex-col items-center bg-gradient-to-br from-red-400 via-green-500 to-blue-600 p-4 font-sans text-white">
       {/* Header bar with title and user info, now outside the main card */}
-      <div className="flex w-full max-w-4xl items-center justify-between mb-6 flex-wrap gap-4">
-        <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-          แดชบอร์ด
-        </h1>
-        {user && (
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <img
-                src={user.profileImage}
-                alt="User Profile"
-                className="h-10 w-10 rounded-full object-cover border-2 border-white"
-              />
-              <span className="font-semibold text-white">
-                {user.name}
-              </span>
-            </div>
-            <a
-              href="/profile"
-              className="rounded-full bg-indigo-600 px-6 py-2 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-indigo-500"
-            >
-              โปรไฟล์
-            </a>
-            <button
-              onClick={handleLogout}
-              className="rounded-full bg-red-600 px-6 py-2 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-red-500"
-            >
-              ออกจากระบบ
-            </button>
-          </div>
-        )}
+      {/* --- NEW: Header Section --- */}
+      <div className="flex justify-between items-center mb-6">
+        <Link href="/" className="flex items-center gap-2 text-gray-500 hover:text-blue-600 transition-colors">
+          <Home size={20} />
+          <span className="hidden sm:inline">Home</span>
+        </Link>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center">My Food Diary</h1>
+        <div className="flex items-center gap-3">
+          <Link href="/profile" className="hidden sm:inline font-semibold text-gray-700">{mockUser.name}</Link>
+          <Image
+            src={mockUser.profileImageUrl}
+            alt="User profile picture"
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+        </div>
       </div>
 
       {/* Main content card */}
