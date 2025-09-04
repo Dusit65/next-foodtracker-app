@@ -3,7 +3,7 @@ import { Prompt } from "next/font/google";
 import "./globals.css";
 
 const prompt = Prompt({
-  subsets: ["latin"],
+  subsets: ["thai", "latin"],
   weight:["100","200","300","400","500","600","700","800","900"],
 });
 
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   authors: [
     {
       name: "Dusit65",
-      url: "https://github.com/Dusit168",
+      url: "https://github.com/Dusit65",
     },
   ],
 };
@@ -32,10 +32,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${prompt.className}`}
-      >
-        {children}
+      <body className={`${prompt.className} flex flex-col min-h-screen bg-gradient-to-br from-red-400 via-green-500 to-blue-600`}>
+        <main className="flex-grow">
+          {children}
+        </main>
+        <footer className="sticky bottom-0 text-center py-[10px] text-xl md:text-2xl text-white opacity-90 bg-gradient-to-t from-black/60 to-transparent">
+          Created by Dusit65
+          <br />
+          Copyright &copy; 2025 Southeast Asia University
+        </footer>
+
       </body>
     </html>
   );
