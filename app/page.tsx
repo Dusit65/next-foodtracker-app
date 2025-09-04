@@ -29,21 +29,23 @@ export default function HoemPage() {
         </div>
 
         {/* Button container */}
-        <div className="flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-          {/* Register Button */}
-          <a href="/register" className="w-full transform rounded-full bg-white px-8 py-3 font-semibold text-sky-600 shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-sky-50 sm:w-auto">
-            Register
-          </a>
-
-          {/* Login Button */}
-          <a href="/login" className="w-full transform rounded-full bg-white px-8 py-3 font-semibold text-sky-600 shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-sky-50 sm:w-auto">
+        <a href="/login" className="items-center w-full transform rounded-full bg-white px-8 py-3 font-semibold text-sky-600 shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-sky-50 sm:w-auto">
             Login
           </a>
-          <p>
+          <br />
+        <a href="/register" className="items-center w-full transform rounded-full bg-white px-8 py-3 font-semibold text-sky-600 shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-sky-50 sm:w-auto">
+            Register
+          </a>
+        <div className="flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0 items-center">
+          {/* Register Button */}
+          
+
+          {/* Login Button */}
+          
+        </div>
+        <p>
             Copyright © 2025 Dusit65
           </p>
-        </div>
-        
       </div>
     </main>
   );
