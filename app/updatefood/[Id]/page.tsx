@@ -36,14 +36,14 @@ export default function EditFoodPage() {
       <div className="flex w-full max-w-lg items-center justify-between mb-6">
         <a href="/dashboard" className="flex items-center gap-2 text-gray-700 hover:text-white transition-colors font-semibold">
           <ArrowLeft size={20} />
-          ย้อนกลับไปหน้าแดชบอร์ด
+          Back to dashboard
         </a>
       </div>
 
       {/* Edit form card */}
       <div className="flex w-full max-w-lg flex-col items-center rounded-2xl bg-white/30 p-8 shadow-xl backdrop-blur-md">
         <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-gray-800 sm:text-4xl">
-          แก้ไขรายการอาหาร
+          Edit Food detail
         </h1>
 
         <form onSubmit={handleSubmit} className="w-full space-y-6">
@@ -75,7 +75,7 @@ export default function EditFoodPage() {
                 <img src={previewImage} alt="Food Preview" className="h-40 w-40 rounded-2xl border-4 border-white object-cover shadow-lg" />
               ) : (
                 <div className="flex h-40 w-40 items-center justify-center rounded-2xl border-4 border-dashed border-white/50 bg-white/20 text-white shadow-lg">
-                  <span className="text-sm font-semibold text-center">เลือกรูปภาพ</span>
+                  <span className="text-sm font-semibold text-center">Select image</span>
                 </div>
               )}
               <input id="foodImage" type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
@@ -85,10 +85,10 @@ export default function EditFoodPage() {
           {/* Save Button */}
           <button
             type="submit"
-            className="w-full transform rounded-full bg-green-600 px-8 py-4 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-green-500 flex items-center justify-center gap-2"
+            className="w-full transform rounded-full bg-blue-600 px-8 py-4 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-green-500 flex items-center justify-center gap-2"
           >
             <Save size={20} />
-            บันทึกการแก้ไข
+            Save Changes
           </button>
         </form>
 
@@ -96,7 +96,7 @@ export default function EditFoodPage() {
         {showSaveMessage && (
           <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-red-400 via-green-500 to-blue-600">
             <div className="rounded-lg bg-green-500 px-8 py-6 text-white text-center shadow-lg">
-              <p className="font-bold">บันทึกเรียบร้อยแล้ว!</p>
+              <p className="font-bold">Save changes success!</p>
             </div>
           </div>
         )}

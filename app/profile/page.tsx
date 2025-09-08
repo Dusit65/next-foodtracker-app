@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, FormEvent, useRef, useState } from 'react';
-import { Home, ImageIcon, Trash2, Save } from 'lucide-react';
+import { Home, ImageIcon, Trash2, Save, ArrowLeft  } from 'lucide-react';
 
 // --- Mock User Data for pre-filling the form ---
 // In a real app, this would come from a context or API call
@@ -55,6 +55,15 @@ export default function Page() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-red-400 via-green-500 to-blue-600 p-4 font-sans text-center text-white">
+      <div className="flex w-full max-w-lg items-center justify-between mb-6">
+        <a
+          href="/dashboard"
+          className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors font-semibold"
+        >
+          <ArrowLeft size={20} />
+          Back to dashboard
+        </a>
+      </div>
       {message && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="rounded-xl bg-white p-6 shadow-2xl">
@@ -70,19 +79,15 @@ export default function Page() {
         </div>
       )}
       <div className="flex w-full max-w-lg flex-col items-center justify-center rounded-2xl bg-white/30 p-8 shadow-xl backdrop-blur-md">
-        <div className="flex w-full items-center justify-between mb-4">
-            <a href="/dashboard" className="rounded-full bg-white/20 p-2 transition-colors hover:bg-white/40">
-                <Home className="h-5 w-5 text-white" />
-            </a>
-        </div>
-        <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-          แก้ไขโปรไฟล์
+        
+        <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-gray-800 sm:text-4xl">
+          Edit Profile
         </h1>
         <form onSubmit={handleSubmit} className="w-full space-y-4">
           <input 
             type="text" 
             name="name"
-            placeholder="ชื่อ-สกุล" 
+            placeholder="Username" 
             value={formData.name}
             onChange={handleInputChange}
             className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" 
@@ -90,7 +95,7 @@ export default function Page() {
           <input 
             type="email" 
             name="email"
-            placeholder="อีเมล" 
+            placeholder="Email" 
             value={formData.email}
             onChange={handleInputChange}
             className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" 
@@ -98,7 +103,7 @@ export default function Page() {
           <input 
             type="password" 
             name="newPassword"
-            placeholder="รหัสผ่านใหม่" 
+            placeholder="New Password" 
             value={formData.newPassword}
             onChange={handleInputChange}
             className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" 
@@ -130,7 +135,7 @@ export default function Page() {
             className="w-full transform rounded-full bg-sky-600 px-8 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-sky-500 flex items-center justify-center space-x-2"
           >
             <Save className="h-5 w-5" />
-            <span>แก้ไขโปรไฟล์</span>
+            <span>Save Profile</span>
           </button>
         </form>
       </div>

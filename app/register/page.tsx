@@ -46,26 +46,26 @@ export default function RegisterPage() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-red-400 via-green-500 to-blue-600 p-4 font-sans text-center text-white">
       <div className="flex w-full max-w-lg flex-col items-center justify-center rounded-2xl bg-white/30 p-8 shadow-xl backdrop-blur-md">
         <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-          ลงทะเบียน
+          Register
         </h1>
         <form onSubmit={handleRegister} className="w-full space-y-4">
           <input 
             type="text" 
-            placeholder="ชื่อ-สกุล" 
+            placeholder="Username" 
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" 
           />
           <input 
             type="email" 
-            placeholder="อีเมล" 
+            placeholder="Email" 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" 
           />
           <input 
             type="password" 
-            placeholder="รหัสผ่าน" 
+            placeholder="Password" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" 
@@ -87,14 +87,14 @@ export default function RegisterPage() {
           </div>
           
           <button type="submit" className="w-full transform rounded-full bg-sky-600 px-8 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-sky-500">
-            ลงทะเบียน
+            Register
           </button>
         </form>
 
         <p className="mt-4 text-sm">
-          มีบัญชีอยู่แล้ว?{' '}
+          have an account?{" "}
           <a href="/login" className="font-semibold text-sky-800 hover:underline">
-            ลงชื่อเข้าใช้ที่นี่
+            Login here
           </a>
         </p>
       </div>

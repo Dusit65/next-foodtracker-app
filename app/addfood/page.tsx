@@ -39,18 +39,18 @@ export default function FunctionPage() {
       {/* Navigation and header */}
       <div className="flex w-full max-w-lg items-center justify-between mb-6">
         <a
-          href="/"
+          href="/dashboard"
           className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors font-semibold"
         >
           <ArrowLeft size={20} />
-          กลับไปที่หน้าหลัก
+          Back to dashboard
         </a>
       </div>
 
       {/* Main content card with form */}
       <div className="flex w-full max-w-lg flex-col items-center rounded-2xl bg-white/30 p-8 shadow-xl backdrop-blur-md">
         <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-gray-800 sm:text-4xl">
-          เพิ่มรายการอาหาร
+          Add Food list
         </h1>
 
         <form className="w-full space-y-6">
@@ -61,7 +61,7 @@ export default function FunctionPage() {
               id="foodName"
               value={foodName}
               onChange={(e) => setFoodName(e.target.value)}
-              placeholder="ชื่ออาหาร"
+              placeholder="Food name"
               className="w-full rounded-full border-0 bg-white/50 px-6 py-4 font-medium text-gray-800 placeholder-gray-500 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500"
             />
           </div>
@@ -93,7 +93,7 @@ export default function FunctionPage() {
               ) : (
                 <div className="flex h-40 w-40 items-center justify-center rounded-2xl border-4 border-dashed border-white/50 bg-white/20 text-white shadow-lg">
                   <span className="text-sm font-semibold text-center">
-                    เลือกรูปภาพ
+                    Select Image
                   </span>
                 </div>
               )}
@@ -112,7 +112,7 @@ export default function FunctionPage() {
             className="w-full transform rounded-full bg-sky-600 px-8 py-4 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-sky-500 flex items-center justify-center gap-2"
           >
             <Save size={20} />
-            บันทึกรายการอาหาร
+            Save changes
           </button>
         </form>
 
@@ -120,7 +120,7 @@ export default function FunctionPage() {
         {showSaveMessage && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
             <div className="rounded-lg bg-green-500 px-8 py-6 text-white text-center shadow-lg">
-              <p className="font-bold">บันทึกสำเร็จ!</p>
+              <p className="font-bold">Save changes success!</p>
             </div>
           </div>
         )}
