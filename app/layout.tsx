@@ -32,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${prompt.className} flex flex-col min-h-screen bg-gradient-to-br from-red-400 via-green-500 to-blue-600`}>
+      <body className={`${prompt.className} flex flex-col min-h-screen bg-black`}>
         <main className="flex-grow">
           {children}
         </main>

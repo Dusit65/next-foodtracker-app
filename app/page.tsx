@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-red-400 via-green-500 to-blue-600  p-4 font-sans text-center text-white">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-black  p-4 font-sans text-center text-white">
       {/* Main content container with a vibrant gradient background */}
       {/* Main Heading */}
       <h1 className="text-5xl md:text-6xl font-extrabold text-white drop-shadow-lg">
@@ -40,8 +40,7 @@ export default function HomePage() {
 
           {/* Login Button */}
         </div>
-        <br />
-        <p>Copyright © 2025 Dusit65</p>
+        
       </div>
     </main>
   );
