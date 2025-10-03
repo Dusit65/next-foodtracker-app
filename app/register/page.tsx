@@ -10,7 +10,7 @@ export default function RegisterPage() {
   const [fullname, setFullName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [genDer, setGender] = useState<boolean>(false);
+  const [genDer, setGender] = useState<string>("");
   const [userImage, setUserImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -129,11 +129,11 @@ export default function RegisterPage() {
             <label>เพศ</label>
             <select
               className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" // เพิ่ม bg-gray-100 หรือสีเทาที่คุณต้องการ
-              value={genDer ? "1" : "0"}
-              onChange={(e) => setGender(e.target.value === "1")}
+              value={genDer}
+              onChange={(e) => setGender(e.target.value)}
             >
-              <option className="text-black" value={"0"}>male</option>
-              <option className="text-black" value={"1"}>female</option>
+              <option className="text-black" value="male">male</option>
+              <option className="text-black" value="female">female</option>
             </select>
           </div>
           <button

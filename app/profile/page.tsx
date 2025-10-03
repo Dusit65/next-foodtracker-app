@@ -14,7 +14,7 @@ export default function Page() {
   const [fullname, setFullName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [genDer, setGender] = useState<boolean>(false);
+  const [genDer, setGender] = useState<string>("");
   const [userImage, setUserImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [oldImg, setOldImg] = useState<string | null>(null);
@@ -186,13 +186,13 @@ export default function Page() {
           <div>
             <select
               className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 focus:outline-none focus:ring-2 focus:ring-sky-500"
-              value={genDer ? "1" : "0"}
-              onChange={(e) => setGender(e.target.value === "1")}
+              value={genDer}
+              onChange={(e) => setGender(e.target.value)}
             >
-              <option value={"0"} className="text-black">
+              <option value="male" className="text-black">
                 male
               </option>
-              <option value={"1"}className="text-black">
+              <option value="female"className="text-black">
                 female
               </option>
             </select>
