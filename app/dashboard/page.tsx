@@ -26,22 +26,9 @@ interface FoodLog {
   name: string;
   meal: "Breakfast" | "Lunch" | "Dinner" | "Snack";
 }
-// --- Mock User Data (เพิ่มเข้ามา) ---
-const mockUser = {
-  name: "Kinema",
-  profileImageUrl: profile, // รูปโปรไฟล์สุ่ม
-};
 
-// --- Type และ Mock Data สำหรับอาหาร (คงเดิม) ---
-type food = {
-  id: string;
-  created_at: string;
-  foodname: string;
-  meal: string;
-  fooddate_at: string;
-  food_image_url: string;
-  update_at: string;
-};
+
+
 
 export default function Page() {
   // const [foods, setFoods] = useState<FoodLog[]>(mockFoodData);
@@ -213,27 +200,7 @@ export default function Page() {
         className="rounded-full object-cover w-10 h-10 ring-1 ring-gray-600"
       />
     );
-  // const filteredFoods = useMemo(() => {
-  //   return foods.filter((food) =>
-  //     food.name.toLowerCase().includes(searchQuery.toLowerCase())
-  //   );
-  // }, [foods, searchQuery]);
-
-  // const totalPages = Math.ceil(filteredFoods.length / itemsPerPage);
-  // const currentItems = filteredFoods.slice(
-  //   (currentPage - 1) * itemsPerPage,
-  //   currentPage * itemsPerPage
-  // );
-
-  // const goToNextPage = () =>
-  //   setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  // const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-
-  // const handleDelete = (id: string) => {
-  //   if (confirm("Are you sure you want to delete this item?")) {
-  //     setFoods((currentFoods) => currentFoods.filter((food) => food.id !== id));
-  //   }
-  // };
+  
 
   return (
     <main className="min-h-screen p-4 sm:p-8 bg-black">
