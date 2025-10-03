@@ -1,141 +1,207 @@
-'use client';
-
-import { ChangeEvent, FormEvent, useRef, useState } from 'react';
-import { Home, ImageIcon, Trash2, Save, ArrowLeft  } from 'lucide-react';
-
-// --- Mock User Data for pre-filling the form ---
-// In a real app, this would come from a context or API call
-const currentUser = {
-  name: 'Jane Doe',
-  email: 'jane.doe@example.com',
-  profileImageUrl: null,
-};
+"use client";
+import React, { useState, useEffect } from "react";
+import { supabase } from "@/libs/supabaseClient";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Page() {
-  const [formData, setFormData] = useState({
-    name: currentUser.name,
-    email: currentUser.email,
-    newPassword: '',
-  });
-  const [previewImage, setPreviewImage] = useState<string | null>(currentUser.profileImageUrl);
-  const [message, setMessage] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  // State user
+  const [userId, setUserId] = useState<string | null>(null);
 
-  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  // State profile
+  const [fullname, setFullName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [genDer, setGender] = useState<boolean>(false);
+  const [userImage, setUserImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [oldImg, setOldImg] = useState<string | null>(null);
+
+  // 1️⃣ ดึง userId
+  useEffect(() => {
+    (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      const uid = user?.id ?? localStorage.getItem("user_id") ?? null;
+      if (!uid) {
+        router.push("/login");
+        return;
+      }
+      setUserId(uid);
+    })();
+  }, [router]);
+
+  // 2️⃣ ดึง profile จาก DB
+  useEffect(() => {
+    if (!userId) return;
+
+    (async () => {
+      const { data, error } = await supabase
+        .from("user_tb")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setFullName(data.fullname );
+      setEmail(data.email );
+      setPassword(data.password );
+      setOldImg(data.user_image_url );
+      setGender(data.gender );
+    })();
+  }, [userId]);
+
+  // 3️⃣ เลือกรูป
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
-      setPreviewImage(URL.createObjectURL(file));
+      setUserImage(file);
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
-  const handleRemoveImage = () => {
-    setPreviewImage(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
+  // 4️⃣ อัปเดต profile
+  const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    let ProfilePicUrl = imagePreview || oldImg || "";
+    // อัปโหลดรูปใหม่
+    if (userImage) {
+      const fileImgName = oldImg?.split("/user_bk/")[1];
+      if (fileImgName) {
+        await supabase.storage.from("user_bk").remove([fileImgName]);
+        console.log("ลบรูปเก่าออกจาก user_bk สำเร็จ✅");
+      }
 
-  const handleImageUploadClick = () => {
-    fileInputRef.current?.click();
-  };
+      const newImgFileName = `${Date.now()}-${userImage.name}`;
+      const { error } = await supabase.storage.from("user_bk").upload(newImgFileName, userImage);
+      if (error) {
+        alert("ไม่สามารถบันทึกรูปลง supabase ได้TwT❌");
+        console.log(error.message);
+        return;
+      }
+
+      const { data } = await supabase.storage.from("user_bk").getPublicUrl(newImgFileName);
+      ProfilePicUrl = data.publicUrl;
+    }
+
+    // อัปเดต DB
+    const { error } = await supabase
+      .from("user_tb")
+      .update({
+        fullname,
+        email,
+        user_image_url: ProfilePicUrl,
+        gender: genDer,
+        update_at: new Date(),
+        
+      })
+      .eq("id", userId);
+
+    if (error) {
+      alert("ไม่สามารถแก้ไขข้อมูลผู้ใช้งานได้TwT❌");
+      console.log(error.message);
+      return;
+    }
+
+    // อัปเดต state และ localStorage
+    setOldImg(ProfilePicUrl);
+    localStorage.setItem("fullname", fullname);
+    localStorage.setItem("user_image_url", ProfilePicUrl);
+
+    alert("แก้ไขข้อมูลผู้ใช้งานสำเร็จ✅");
     
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    console.log("Updated data:", {
-        ...formData,
-        profileImage: previewImage,
-    });
-    setMessage("Profile saved successfully!");
+
+    // รีเฟรชหน้า dashboard
+    router.replace("/dashboard");
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-red-400 via-green-500 to-blue-600 p-4 font-sans text-center text-white">
-      <div className="flex w-full max-w-lg items-center justify-between mb-6">
-        <a
-          href="/dashboard"
-          className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors font-semibold"
-        >
-          <ArrowLeft size={20} />
-          Back to dashboard
-        </a>
-      </div>
-      {message && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="rounded-xl bg-white p-6 shadow-2xl">
-            <h3 className="text-xl font-semibold text-gray-800">Success!</h3>
-            <p className="mt-2 text-gray-600">{message}</p>
-            <button
-              onClick={() => setMessage(null)}
-              className="mt-4 rounded-md bg-sky-600 px-4 py-2 text-white transition-colors hover:bg-sky-500"
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
+    <main className="flex min-h-screen flex-col items-center justify-center bg-black p-4 font-sans text-center text-white">
       <div className="flex w-full max-w-lg flex-col items-center justify-center rounded-2xl bg-white/30 p-8 shadow-xl backdrop-blur-md">
-        
-        <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-gray-800 sm:text-4xl">
+        <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
           Edit Profile
         </h1>
-        <form onSubmit={handleSubmit} className="w-full space-y-4">
-          <input 
-            type="text" 
-            name="name"
-            placeholder="Username" 
-            value={formData.name}
-            onChange={handleInputChange}
-            className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" 
+        <form onSubmit={handleUpdateProfile} className="w-full space-y-4">
+          <input
+            type="text"
+            placeholder="Fullname"
+            value={fullname}
+            onChange={(e) => setFullName(e.target.value)}
+            className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
-          <input 
-            type="email" 
-            name="email"
-            placeholder="Email" 
-            value={formData.email}
-            onChange={handleInputChange}
-            className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" 
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
-          <input 
-            type="password" 
-            name="newPassword"
-            placeholder="New Password" 
-            value={formData.newPassword}
-            onChange={handleInputChange}
-            className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" 
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
-          <div className="my-4 flex items-center justify-center space-x-4">
-            <div onClick={handleImageUploadClick} className="cursor-pointer">
-              {previewImage ? (
-                <img src={previewImage} alt="Profile Preview" className="h-28 w-28 rounded-full border-4 border-white object-cover shadow-lg" />
+          {/* Image */}
+          <div className="my-4 flex flex-col items-center justify-center">
+            <label
+              htmlFor="file-upload"
+              className="cursor-pointer flex flex-col items-center justify-center text-white border-4 border-dashed border-white/50 rounded-full h-28 w-28 hover:bg-gray-600 shadow-lg"
+            >
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Profile Preview"
+                  className="h-28 w-28 rounded-full object-cover border-4 border-white"
+                />
+              ) : oldImg ? (
+                <Image
+                  src={oldImg}
+                  alt="Current Profile"
+                  width={160}
+                  height={160}
+                  className="rounded-full object-cover border-4 border-white"
+                />
               ) : (
-                <div className="flex h-28 w-28 items-center justify-center rounded-full border-4 border-dashed border-white/50 bg-white/20 text-white shadow-lg">
-                  <ImageIcon className="h-10 w-10 opacity-70" />
+                <div className="flex flex-col items-center justify-center h-full w-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-10 w-10 opacity-70">
+                    <path d="M4 4h4.5l1.5-3h4l1.5 3H20a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm8 11.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7z" />
+                  </svg>
+                  <p className="text-xs mt-1">กดเพื่อเลือกรูป</p>
                 </div>
               )}
-              <input id="file-upload" type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageChange} />
-            </div>
-            {previewImage && (
-              <button
-                type="button"
-                onClick={handleRemoveImage}
-                className="rounded-full bg-red-500 p-2 text-white shadow-md transition-transform hover:scale-105"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
-            )}
+              <input id="file-upload" type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+            </label>
           </div>
-          
-          <button 
-            type="submit" 
-            className="w-full transform rounded-full bg-sky-600 px-8 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-sky-500 flex items-center justify-center space-x-2"
+          {/* Gender */}
+          <div>
+            <select
+              className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              value={genDer ? "1" : "0"}
+              onChange={(e) => setGender(e.target.value === "1")}
+            >
+              <option value={"0"} className="text-black">
+                male
+              </option>
+              <option value={"1"}className="text-black">
+                female
+              </option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            className="w-full transform rounded-full bg-sky-600 px-8 py-3 font-semibold text-white shadow-md transition duration-300 ease-in-out hover:scale-105 hover:bg-sky-500"
           >
-            <Save className="h-5 w-5" />
-            <span>Save Profile</span>
+            Save Edit
           </button>
         </form>
       </div>

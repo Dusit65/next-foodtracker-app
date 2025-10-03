@@ -8,20 +8,12 @@ export default function AddFoodPage() {
   const router = useRouter();
 
   // State for form fields
-  const [foodName, setFoodName] = useState("");
-  const [mealType, setMealType] = useState("Breakfast");
+  const [foodName, setFoodName] = useState<string>("");
+  const [meal, setMeal] = useState("Breakfast");
   const [foodImage, setFoodImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [showSaveMessage, setShowSaveMessage] = useState(false);
   const [saving, setSaving] = useState(false);
-
-  // // ไทย → อังกฤษ ให้ตรงกับ Dashboard ("Breakfast" | "Lunch" | "Dinner" | "Snack")
-  // const mealMap: Record<string, "Breakfast" | "Lunch" | "Dinner" | "Snack"> = {
-  //   "อาหารเช้า": "Breakfast",
-  //   "อาหารกลางวัน": "Lunch",
-  //   "อาหารเย็น": "Dinner",
-  //   "ของว่าง": "Snack",
-  // };
 
   // Handle image file selection and create a URL for preview
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,15 +21,13 @@ export default function AddFoodPage() {
     if (file) {
       setFoodImage(file);
       setPreviewImage(URL.createObjectURL(file));
-    } else {
-      setFoodImage(null);
-      setPreviewImage(null);
     }
   };
 
   // Handle form submission
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
     if (!foodName) {
       alert("กรุณากรอกชื่ออาหาร");
       return;
@@ -58,35 +48,34 @@ export default function AddFoodPage() {
       }
 
       // 2) อัปโหลดรูปไป bucket food_bk (ถ้ามี)
-      let imagePath: string | null = null;
+      // let imagePath: string | null = null;
+      let imageFoodUrl = ""; //variable to store img url in supabase
       if (foodImage) {
-        const safeName = foodImage.name.replace(/\s+/g, "_");
-        const filePath = `foods/${userId}/${Date.now()}_${safeName}`;
-
-        const { error: uploadErr } = await supabase.storage
+        const newImgFileName = `${Date.now()}-${foodImage.name}`; //create new file name
+        const { error } = await supabase.storage
           .from("food_bk")
-          .upload(filePath, foodImage, {
-            upsert: true,
-            contentType: foodImage.type,
-            cacheControl: "3600",
-          });
-
-        if (uploadErr) {
-          console.warn("upload error:", uploadErr.message);
-          alert("อัปโหลดรูปไม่สำเร็จ: " + uploadErr.message);
-          setSaving(false);
+          .upload(newImgFileName, foodImage);
+        if (error) {
+          //Upload Failed
+          alert("ไม่สามารถบันทึกลง supabase ได้TwT");
+          console.log(error.message);
           return;
+        } else {
+          //Upload Success
+          const { data } = await supabase.storage
+            .from("food_bk")
+            .getPublicUrl(newImgFileName);
+          imageFoodUrl = data.publicUrl;
         }
-        imagePath = filePath; // เก็บ path
       }
 
       // 3) บันทึกลง table food_tb
       const today = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
       const { error: insertErr } = await supabase.from("food_tb").insert({
         foodname: foodName,
-        meal: mealType ?? "Breakfast",
+        meal: meal ?? "Breakfast",
         fooddate_at: today,
-        food_image_url: imagePath,
+        food_image_url: imageFoodUrl,
         user_id: userId,
       });
 
@@ -151,29 +140,37 @@ export default function AddFoodPage() {
           <div className="relative">
             <select
               id="mealType"
-              value={mealType}
-              onChange={(e) => setMealType(e.target.value)}
+              value={meal}
+              onChange={(e) => setMeal(e.target.value)}
               className="w-full  border border-gray-600 bg-gray-700/70 px-6 py-4 font-medium text-gray-100 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             >
-              <option value="Breakfast" className="bg-black text-gray-100">Breakfast</option>
-              <option value="Lunch" className="bg-gray-800 text-gray-100">Lunch</option>
-              <option value="Dinner" className="bg-gray-800 text-gray-100">Dinner</option>
-              <option value="Snack" className="bg-gray-800 text-gray-100">Snack</option>
+              <option value="Breakfast" className="bg-black text-gray-100">
+                Breakfast
+              </option>
+              <option value="Lunch" className="bg-gray-800 text-gray-100">
+                Lunch
+              </option>
+              <option value="Dinner" className="bg-gray-800 text-gray-100">
+                Dinner
+              </option>
+              <option value="Snack" className="bg-gray-800 text-gray-100">
+                Snack
+              </option>
             </select>
           </div>
 
           {/* Image Upload */}
-          <div className="flex flex-col items-center space-y-4">
+          {/* <div className="flex flex-col items-center ">
             <label htmlFor="foodImage" className="cursor-pointer">
               {previewImage ? (
                 <img
                   src={previewImage}
                   alt="Food Preview"
-                  className="h-40 w-40 rounded-2xl border-4 border-gray-300 object-cover shadow-lg"
+                  className="h-40 w-40 rounded-2xl border-4 border-gray-300 object-cover shadow-lg hover:border-dashed hover:bg-gray-600"
                 />
               ) : (
-                <div className="flex h-40 w-40 items-center justify-center rounded-2xl border-4 border-dashed border-gray-500/70 bg-gray-700/40 text-gray-200 shadow-lg">
-                  <span className="text-sm font-semibold text-gray-300 text-center">
+                <div className="flex h-40 w-40 items-center justify-center rounded-2xl border-4  border-gray-600 bg-gray-700/40 text-gray-200 shadow-lg hover:bg-gray-600 hover:border-dashed hover:border-white ">
+                  <span className="text-sm font-semibold  text-center ">
                     Select Image
                   </span>
                 </div>
@@ -186,6 +183,39 @@ export default function AddFoodPage() {
                 onChange={handleImageChange}
               />
             </label>
+          </div> */}
+          <div className="flex flex-col items-center justify-center">
+            <div
+              className="flex flex-col items-center justify-center
+      text-white px-6 py-4 rounded-2xl 
+      cursor-pointer hover:bg-gray-600 hover:border-dashed hover:border-white 
+      shadow-lg border-4 border-gray-700"
+              onClick={() => document.getElementById("foodImage")?.click()}
+            >
+              <input
+                id="foodImage"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+              />
+
+              {previewImage ? (
+                
+                  <img
+                    src={previewImage}
+                    alt="Food Preview"
+                    className="h-40 w-40 rounded-2xlobject-cover "
+                  />
+                
+              ) : (
+                
+                  <span className="text-sm font-semibold text-center">
+                    Select Image
+                  </span>
+                
+              )}
+            </div>
           </div>
 
           {/* Save Button */}

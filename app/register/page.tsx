@@ -1,9 +1,5 @@
-"use client";
 "use client"; //use client for useState
 import React from "react";
-import Image from "next/image";
-import tasklogo from "./../../assets/images/tasking.png";
-import Link from "next/link";
 import { useState } from "react";
 import { supabase } from "./../../libs/supabaseClient";
 import { useRouter } from "next/navigation"; //next navigation
@@ -11,10 +7,10 @@ import { useRouter } from "next/navigation"; //next navigation
 export default function RegisterPage() {
   const router = useRouter();
 
-  const [fullname, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [gender, setGender] = useState<boolean>(false);
+  const [fullname, setFullName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [genDer, setGender] = useState<boolean>(false);
   const [userImage, setUserImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -27,7 +23,7 @@ export default function RegisterPage() {
     }
   };
 
-  const handleRegisterClick = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     //upload img to supabase
     let user_image_url = "";
@@ -40,7 +36,7 @@ export default function RegisterPage() {
         .upload(newImgFileName, userImage);
       if (error) {
         //Upload Failed
-        alert("ไม่สามารถบันทึกลง supabase ได้TwT");
+        alert("ไม่สามารถบันทึกรูปโปรไฟล์ลง supabase ได้TwT❌");
         console.log(error.message);
         return;
       } else {
@@ -49,6 +45,7 @@ export default function RegisterPage() {
           .from("user_bk")
           .getPublicUrl(newImgFileName);
         user_image_url = data.publicUrl;
+        console.log("บันทึกรูปโปรไฟล์ลง supabase สำเร็จ✅");
       }
     }
     //Insert data to supabase
@@ -56,11 +53,11 @@ export default function RegisterPage() {
       fullname,
       email,
       password,
-      gender,
+      gender:genDer,
       user_image_url: user_image_url,
     });
     if (error) {
-      alert("พบปัญหาไม่สามารถสมัครสมาชิกได้TwT");
+      alert("พบปัญหาไม่สามารถสมัครสมาชิกได้TwT❌");
       console.log(error.message);
       return;
     } else {
@@ -76,7 +73,7 @@ export default function RegisterPage() {
         <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
           Register
         </h1>
-        <form  onSubmit={handleRegisterClick} className="w-full space-y-4">
+        <form  onSubmit={handleRegister} className="w-full space-y-4">
           <input
             type="text"
             placeholder="Fullname"
@@ -132,11 +129,11 @@ export default function RegisterPage() {
             <label>เพศ</label>
             <select
               className="w-full rounded-md border-0 bg-white/50 px-4 py-3 font-medium text-white placeholder-white/80 transition duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500" // เพิ่ม bg-gray-100 หรือสีเทาที่คุณต้องการ
-              value={gender ? "male" : "female"}
-              onChange={(e) => setGender(e.target.value === "male")}
+              value={genDer ? "1" : "0"}
+              onChange={(e) => setGender(e.target.value === "1")}
             >
-              <option className="text-black" value={"male"}>ชาย</option>
-              <option className="text-black" value={"female"}>หญิง</option>
+              <option className="text-black" value={"0"}>male</option>
+              <option className="text-black" value={"1"}>female</option>
             </select>
           </div>
           <button
